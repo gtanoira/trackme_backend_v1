@@ -37,5 +37,16 @@ module Backend
       g.helper          false
       g.channel         assets: false
     end
+
+    # Mailer: se agregó la configuración SMTP para poder enviar mails desde localhost
+    ActionMailer::Base.smtp_settings = {
+      :address        => 'smtp.gmail.com',
+      :domain         => 'mail.google.com',
+      :port           => 587,
+      :user_name      => 'gonzalo.mtanoira@gmail.com',   #ENV['GMAIL_USERNAME']
+      :password       => 'WalkingTheNow',  # ENV['GMAIL_PASSWORD']
+      :authentication => 'plain',
+      :enable_starttls_auto => true
+    }
   end
 end

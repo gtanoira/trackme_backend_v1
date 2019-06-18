@@ -22,6 +22,9 @@ gem 'devise'
 # Open CSV, Excel files
 gem 'roo', "~> 2.7.0"
 gem 'roo-xls'
+# JWT token for APIs
+gem 'jwt'
+gem 'knock'
 # *******************************************************************************************
 
 # Use ActiveStorage variant

@@ -1,0 +1,2 @@
+class Country < IsoCountry
+end

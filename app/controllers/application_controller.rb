@@ -2,8 +2,12 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   # That's all there is:
-  prepend_view_path Rails.root.join("frontend")
+  #prepend_view_path Rails.root.join("frontend")
   helper_method :set_current_user
+
+  # That's all there is:
+  #prepend_view_path Rails.root.join("frontend")
+  #helper_method :set_current_user
 
   # Downloads of files to the client's pc
   # @param type   (string): type of download files (log, etc)

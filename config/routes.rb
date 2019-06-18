@@ -1,10 +1,13 @@
 Rails.application.routes.draw do
+
+  post 'user_token' => 'user_token#create'
+  # devise for rails web application access
   devise_for :users
   devise_scope :user do
      get 'login',  to: 'devise/sessions#new'
      get 'logout', to: 'devise/sessions#destroy'
   end
-
+  
   # *********************************************************************************
   # CUSTOMER ORDERS
   # For Rails
@@ -106,8 +109,6 @@ Rails.application.routes.draw do
   #                             "format" => <ext>    // ej. "log"
   #                            }
   match 'download/:type/:id' => 'application#download', :via => [:get]
-
-  
 
   # -------------------------------------------------------------------------------------
   # MAIN ROOT

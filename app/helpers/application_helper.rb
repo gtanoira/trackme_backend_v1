@@ -1,6 +1,5 @@
 module ApplicationHelper
 
-
    # --------------------------------------------------------------------------------
    # Create the OPTIONs for the company SELECT tag
    def companyOptions(companyDefault)
