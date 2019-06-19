@@ -1,6 +1,13 @@
 Rails.application.routes.draw do
 
+  # Knock with JWT
   post 'user_token' => 'user_token#create'
+  #namespace :api,  path: '/api' do   # , constraints: { subdomain: 'api' } do
+  #  namespace :v1, path: '/v1' do  # ,  constraints: { subdomain: 'v1' } do
+  #    resources :users
+  #  end
+  #end  
+
   # devise for rails web application access
   devise_for :users
   devise_scope :user do
@@ -16,7 +23,7 @@ Rails.application.routes.draw do
     post 'import',    on: :collection
   end
   # For APIs
-  scope '/api' do
+  scope '/api/v1', module: 'api/v1' do
     resources :customer_orders, only: [:index, :create, :show, :update] do
       get  'lastorder/:company_id', on: :collection, action: :get_last_order  
       # Events
@@ -50,7 +57,7 @@ Rails.application.routes.draw do
   # *********************************************************************************
   # STOCK ITEMS
   # For APIs
-  scope '/api' do
+  scope '/api/v1' do
     resources :items, only: [:create, :update]
   end 
 

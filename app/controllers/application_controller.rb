@@ -1,6 +1,13 @@
 # app/controllers/application_controller.rb
 class ApplicationController < ActionController::Base
+  puts '*** AppCtrler 1'
   protect_from_forgery with: :exception
+
+  # JWT and Knock
+  puts '*** AppCtrler 2'
+  include Knock::Authenticable
+  undef_method :current_user
+
   # That's all there is:
   #prepend_view_path Rails.root.join("frontend")
   helper_method :set_current_user
@@ -24,6 +31,7 @@ class ApplicationController < ActionController::Base
 
   # Sets current_user to all other Controllers
   def set_current_user
+    puts '*** AppCtrler 3'
     User.current = current_user
   end
 
