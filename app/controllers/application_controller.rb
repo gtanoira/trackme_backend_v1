@@ -1,6 +1,5 @@
 # app/controllers/application_controller.rb
 class ApplicationController < ActionController::Base
-  puts '*** AppCtrler 1'
   protect_from_forgery with: :exception
 
   # JWT and Knock
@@ -31,7 +30,6 @@ class ApplicationController < ActionController::Base
 
   # Sets current_user to all other Controllers
   def set_current_user
-    puts '*** AppCtrler 3'
     User.current = current_user
   end
 

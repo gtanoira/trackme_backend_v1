@@ -1,8 +1,8 @@
 module Api
   module V1
+
     class CustomerOrdersController < Api::V1::ApplicationController
-      before_action :authenticate_user!
-      protect_from_forgery with: :null_session
+      #skip_before_action :verify_authenticity_token
 
       # Define variables for cross-method's
       @@UrlLogFile = nil    # URL of the LOG errors file (URL path NOT OS path)
@@ -17,7 +17,6 @@ module Api
         @@UrlLogFile
       end
 
-
       # ******************************************************************************
       # Add a new order into the Data Base
       #
@@ -27,72 +26,76 @@ module Api
       # Request Body: (JSON) customer order data
       #
       def create
-        begin
+        token_ok, token_error = helpers.API_validate_token(request)
+        if not token_ok
+          render json: {message: token_error }, status: 401
+        else
+          begin
 
-          # Get last order no. for company
-          new_order_no = get_last_order_no(params['companyId'])
-          if new_order_no != 0 then
-            customer_order = CustomerOrder.new
-            customer_order.company_id      = params['companyId']
-            customer_order.customer_id     = params['customerId']
-            customer_order.order_no        = new_order_no + 1
-            customer_order.order_date      = params['orderDate']
-            customer_order.observations    = params['observations']
-            customer_order.cust_ref        = params['custRef']
-            customer_order.order_type      = params['orderType']
-            customer_order.order_status    = params['orderStatus']
-            customer_order.applicant_name  = params['applicantName']
-            customer_order.old_order_no    = params['oldOrderNo']
-            customer_order.incoterm        = params['incoterm']
-            customer_order.shipment_method = params['shipmentMethod']
-            customer_order.eta             = params['eta']
-            customer_order.delivery_date   = params['deliveryDate']
-            customer_order.events_scope    = params['eventsScope']
-            customer_order.third_party_id  = params['thirdPartyId']
-            customer_order.from_entity     = params['fromEntity']
-            customer_order.from_address1   = params['fromAddress1']
-            customer_order.from_address2   = params['fromAddress2']
-            customer_order.from_city       = params['fromCity']
-            customer_order.from_zipcode    = params['fromZipcode']
-            customer_order.from_state      = params['fromState']
-            customer_order.from_country_id = params['fromCountryId']
-            customer_order.to_entity       = params['toEntity']
-            customer_order.to_address1     = params['toAddress1']
-            customer_order.to_address2     = params['toAddress2']
-            customer_order.to_city         = params['toCity']
-            customer_order.to_zipcode      = params['toZipcode']
-            customer_order.to_state        = params['toState']
-            customer_order.to_country_id   = params['toCountryId']
-            customer_order.save!
+            # Get last order no. for company
+            new_order_no = get_last_order_no(params['companyId'])
+            if new_order_no != 0 then
+              customer_order = CustomerOrder.new
+              customer_order.company_id      = params['companyId']
+              customer_order.customer_id     = params['customerId']
+              customer_order.order_no        = new_order_no + 1
+              customer_order.order_date      = params['orderDate']
+              customer_order.observations    = params['observations']
+              customer_order.cust_ref        = params['custRef']
+              customer_order.order_type      = params['orderType']
+              customer_order.order_status    = params['orderStatus']
+              customer_order.applicant_name  = params['applicantName']
+              customer_order.old_order_no    = params['oldOrderNo']
+              customer_order.incoterm        = params['incoterm']
+              customer_order.shipment_method = params['shipmentMethod']
+              customer_order.eta             = params['eta']
+              customer_order.delivery_date   = params['deliveryDate']
+              customer_order.events_scope    = params['eventsScope']
+              customer_order.third_party_id  = params['thirdPartyId']
+              customer_order.from_entity     = params['fromEntity']
+              customer_order.from_address1   = params['fromAddress1']
+              customer_order.from_address2   = params['fromAddress2']
+              customer_order.from_city       = params['fromCity']
+              customer_order.from_zipcode    = params['fromZipcode']
+              customer_order.from_state      = params['fromState']
+              customer_order.from_country_id = params['fromCountryId']
+              customer_order.to_entity       = params['toEntity']
+              customer_order.to_address1     = params['toAddress1']
+              customer_order.to_address2     = params['toAddress2']
+              customer_order.to_city         = params['toCity']
+              customer_order.to_zipcode      = params['toZipcode']
+              customer_order.to_state        = params['toState']
+              customer_order.to_country_id   = params['toCountryId']
+              customer_order.save!
 
-            puts '*** ORDEN SALVADA: ' + customer_order.order_no.to_s
+              puts '*** ORDEN SALVADA: ' + customer_order.order_no.to_s
 
-            respond_to do |format|
-              format.json { render json: {message: 'Customer order saved. Order No.' + customer_order.order_no.to_s,
-                                          orderId: customer_order.id,
-                                          orderNo: customer_order.order_no} }
+              respond_to do |format|
+                format.json { render json: {message: 'Customer order saved. Order No.' + customer_order.order_no.to_s,
+                                            orderId: customer_order.id,
+                                            orderNo: customer_order.order_no} }
+              end
+
+            else
+
+              respond_to do |format|
+                format.json { render json: {message: 'Error saving the new customer order. Not able to obtain a order no.',
+                                            orderId: 0,
+                                            orderNo: 0} }
+              end
             end
 
-          else
 
+          rescue => e
+            puts "ERROR BACKTRACE:"
+            puts e.backtrace
             respond_to do |format|
-              format.json { render json: {message: 'Error saving the new customer order. Not able to obtain a order no.',
-                                          orderId: 0,
-                                          orderNo: 0} }
+              format.json { render json: {message: 'Error saving the customer order no. ' + customer_order.order_no.to_s,
+                                          extraMsg: e.message} }
             end
-          end
-
-
-        rescue => e
-          puts "ERROR BACKTRACE:"
-          puts e.backtrace
-          respond_to do |format|
-            format.json { render json: {message: 'Error saving the customer order no. ' + customer_order.order_no.to_s,
-                                        extraMsg: e.message} }
           end
         end
       end
-
 
       # ******************************************************************************
       # Get the next Customer Order No.
@@ -104,21 +107,25 @@ module Api
       #   Content-type: text/html
       #   body: (number) => last order for the company selected
       # 
-      # URL: /rails/custorder/getnextno
+      # API access
       def get_last_order
-        xcompany_id = params[:company_id].to_i
-        @last_order = CustomerOrder
-                    .select('order_no as last_order')
-                    .order(order_no: :desc)
-                    .limit(1)
-                    .find_by(company_id: xcompany_id)
-        @last_order = (@last_order.blank?)? 0 : @last_order
-        
-        respond_to do |format|
-          format.json { render json: @last_order }
+        token_ok, token_error = helpers.API_validate_token(request)
+        if not token_ok
+          render json: {message: token_error }, status: 401
+        else
+          xcompany_id = params[:company_id].to_i
+          @last_order = CustomerOrder
+                      .select('order_no as last_order')
+                      .order(order_no: :desc)
+                      .limit(1)
+                      .find_by(company_id: xcompany_id)
+          @last_order = (@last_order.blank?)? 0 : @last_order
+          
+          respond_to do |format|
+            format.json { render json: @last_order }
+          end
         end
       end
-
 
       # ******************************************************************************
       # Get the last Customer Order No. by a specific company id
@@ -138,7 +145,6 @@ module Api
         last_order = (@last_order.blank?)? 0 : @last_order.order_no
         return last_order
       end
-
 
       # ******************************************************************************
       # List all Customer Orders data with a grid using ag-grid

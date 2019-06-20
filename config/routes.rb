@@ -2,11 +2,6 @@ Rails.application.routes.draw do
 
   # Knock with JWT
   post 'user_token' => 'user_token#create'
-  #namespace :api,  path: '/api' do   # , constraints: { subdomain: 'api' } do
-  #  namespace :v1, path: '/v1' do  # ,  constraints: { subdomain: 'v1' } do
-  #    resources :users
-  #  end
-  #end  
 
   # devise for rails web application access
   devise_for :users
@@ -36,7 +31,7 @@ Rails.application.routes.draw do
   # For Rails
   # resources :warehouse_receipts, only: [:index]
   # For APIs
-  scope '/api' do
+  scope '/api/v1', module: 'api/v1' do
     resources :warehouse_receipts, only: [:create, :show, :update] do
       get  'lastorder/:company_id', on: :collection, action: :get_last_order  
       get  'customer_order/get_ids/:customer_order_id', on: :collection, action: :get_ids
@@ -48,7 +43,7 @@ Rails.application.routes.draw do
   # *********************************************************************************
   # INTERNAL ORDER (WR & SHIPMENTS)
   # For APIs
-  scope '/api' do
+  scope '/api/v1', module: 'api/v1' do
     resources :internal_orders, only: [] do
       resources :items,  only: [:index], controller: :internal_orders, action: :items
     end
@@ -57,7 +52,7 @@ Rails.application.routes.draw do
   # *********************************************************************************
   # STOCK ITEMS
   # For APIs
-  scope '/api/v1' do
+  scope '/api/v1', module: 'api/v1' do
     resources :items, only: [:create, :update]
   end 
 
@@ -66,7 +61,7 @@ Rails.application.routes.draw do
   # For Rails
   resources :companies, only: [:index]
   # For APIs
-  scope '/api' do
+  scope '/api/v1', module: 'api/v1' do
     resources :companies, only: [:index]
   end 
 
@@ -75,7 +70,7 @@ Rails.application.routes.draw do
   # For Rails
   resources :countries, only: [:index]
   # For APIs
-  scope '/api' do
+  scope '/api/v1', module: 'api/v1' do
     resources :countries, only: [:index]
   end 
 
@@ -88,7 +83,7 @@ Rails.application.routes.draw do
      get  ':type',     on: :collection, action: :index   # to get different types of entities: (CUS)tomers, (CAR)riers, (SUP)pliers, (null):all
   end
   # For APIs
-  scope '/api' do
+  scope '/api/v1', module: 'api/v1' do
     resources :entities, only: [:index, :show] do
        get  'type/:type', on: :collection, action: :index
     end
@@ -99,7 +94,7 @@ Rails.application.routes.draw do
   # For Rails
   resources :event_types, only: [:index]
   # For APIs
-  scope '/api' do
+  scope '/api/v1', module: 'api/v1' do
     resources :event_types, only: [:index]
   end 
 
