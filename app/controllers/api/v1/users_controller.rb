@@ -17,6 +17,7 @@ module Api
         if not token_ok
           render json: {message: token_error }, status: 401
         else
+          # Get user data
           Rails.logger.info current_user.inspect
           render json: @user, serializer: UserSerializer
         end

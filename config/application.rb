@@ -48,5 +48,14 @@ module Backend
       :authentication => 'plain',
       :enable_starttls_auto => true
     }
+
+    # CORS: cross-origin for Angular
+    config.middleware.insert_before 0, Rack::Cors do
+      allow do
+        origins '*'
+        resource '*', headers: :any, methods: [:get, :post, :options]
+      end
+    end
+
   end
 end

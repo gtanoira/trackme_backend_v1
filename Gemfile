@@ -26,6 +26,8 @@ gem 'roo-xls'
 gem 'jwt'
 gem 'knock'
 gem 'active_model_serializers'
+# CORS: cross-origin for Angular
+gem 'rack-cors', '~> 1.0', '>= 1.0.3'
 # *******************************************************************************************
 
 # Use ActiveStorage variant

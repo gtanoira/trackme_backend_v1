@@ -16,7 +16,7 @@ module ApisHelper
     log_file.puts ''
     log_file.puts 'PARAMS:'
     log_file.puts req_params
-   log_file.puts ''
+    log_file.puts ''
     log_file.puts 'RESULT:'
     log_file.puts result
     log_file.close
