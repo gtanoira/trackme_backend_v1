@@ -2,6 +2,10 @@ Rails.application.routes.draw do
 
   # Knock with JWT
   post 'user_token' => 'user_token#create'
+  # For APIs
+  scope '/api/v1', module: 'api/v1' do
+    resources :users, only: [:show]
+  end 
 
   # devise for rails web application access
   devise_for :users

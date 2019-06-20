@@ -25,6 +25,7 @@ gem 'roo-xls'
 # JWT token for APIs
 gem 'jwt'
 gem 'knock'
+gem 'active_model_serializers'
 # *******************************************************************************************
 
 # Use ActiveStorage variant

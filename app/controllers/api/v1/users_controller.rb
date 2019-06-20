@@ -2,20 +2,24 @@ module Api
   module V1
 
     class UsersController < ApplicationController
-      puts '*** PASO 1'
-      before_action :authenticate_user
-      before_action :set_user, only: [:show, :update, :destroy]
+      
+      before_action :set_user, only: [:show]
   
       def index
         @users = User.all
-        puts '*** Users:'
         puts @users
         render json: @users, each_serializer: UserSerializer
       end
   
       def show
-        Rails.logger.info current_user.inspect
-        render json: @user #, serializer: UserSerializer
+      # Validate JWT token
+        token_ok, token_error = helpers.API_validate_token(self.request)
+        if not token_ok
+          render json: {message: token_error }, status: 401
+        else
+          Rails.logger.info current_user.inspect
+          render json: @user, serializer: UserSerializer
+        end
       end
   
       def create
