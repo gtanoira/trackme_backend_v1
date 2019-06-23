@@ -13,10 +13,8 @@ module ApisHelper
     log_file.puts ''
     log_file.puts '*****************************************************************************************'
     log_file.puts api_name + ' -> ' + DateTime.now.strftime("%Y-%m-%d %H:%M:%S") +' by '+ ((user_data == nil) ? 'No user identified' : user_data)
-    log_file.puts ''
     log_file.puts 'PARAMS:'
     log_file.puts req_params
-    log_file.puts ''
     log_file.puts 'RESULT:'
     log_file.puts result
     log_file.close
@@ -45,7 +43,7 @@ module ApisHelper
       token = request.headers['Authorization']
       
       # Token exists
-      if token != nil && token !='' && token['JWT']
+      if token != nil && token !='' && token['jwt']
         jwt_token = JWT.decode request.headers['Authorization'][4..-1], Rails.application.secrets.secret_key_base, true, { algorithm: 'HS256' }
         #user_id = jwt_token[0]["sub"]
         #usercheck = User.find(user_id)
@@ -67,6 +65,26 @@ module ApisHelper
       # Grabar en el LOG
       API_save_to_log(url_path, params.to_s, 'TRK-0006(E): invalid token.')
       return false, 'TRK-0006(E): invalid token.'
+    end
+  
+  end
+
+  # ********************************************************************************************
+  # Retrives the user_id from the JWT token
+  #
+  # @param: string: JWT token. The token MUST be valid
+  # 
+  # @return: number: user ID (0 (cero): invalid user )
+  #
+  def API_get_user_from_token(jwt_token)
+
+    begin
+      token_decoded = JWT.decode jwt_token, Rails.application.secrets.secret_key_base, true, { algorithm: 'HS256' }
+      user_id = token_decoded[0]["sub"]
+      return user_id
+    rescue
+      # Invalid user
+      return 0
     end
   
   end

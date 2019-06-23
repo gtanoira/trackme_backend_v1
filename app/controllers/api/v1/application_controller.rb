@@ -7,7 +7,7 @@ module Api
       protect_from_forgery with: :exception
     
       include Knock::Authenticable
-      #undef_method :current_user
+      undef_method :current_user
         
       def is_admin?
         signed_in? ? current_user.admin : false

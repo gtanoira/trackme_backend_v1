@@ -10,32 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_20_133921) do
-
-  create_table "api_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin", force: :cascade do |t|
-    t.string "provider", default: "email", null: false
-    t.string "uid", default: "", null: false
-    t.string "encrypted_password", default: "", null: false
-    t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.boolean "allow_password_change", default: false
-    t.datetime "remember_created_at"
-    t.string "confirmation_token"
-    t.datetime "confirmed_at"
-    t.datetime "confirmation_sent_at"
-    t.string "unconfirmed_email"
-    t.string "name"
-    t.string "nickname"
-    t.string "image"
-    t.string "email"
-    t.text "tokens"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["confirmation_token"], name: "index_api_users_on_confirmation_token", unique: true
-    t.index ["email"], name: "index_api_users_on_email", unique: true
-    t.index ["reset_password_token"], name: "index_api_users_on_reset_password_token", unique: true
-    t.index ["uid", "provider"], name: "index_api_users_on_uid_and_provider", unique: true
-  end
+ActiveRecord::Schema.define(version: 2019_06_21_174059) do
 
   create_table "companies", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin", force: :cascade do |t|
     t.string "name"
@@ -258,6 +233,17 @@ ActiveRecord::Schema.define(version: 2019_06_20_133921) do
     t.index ["item_id", "company_id"], name: "index_items_on_item_id_and_company_id", unique: true
   end
 
+  create_table "menues", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin", force: :cascade do |t|
+    t.string "pgm_id", null: false, comment: "Id assign to the program"
+    t.string "title", comment: "Program description"
+    t.string "alias", limit: 4, comment: "Alias for the program (4 digits max) to be printed on the menu button"
+    t.string "pgm_group", default: "No group", comment: "Group ID where the program belongs to"
+    t.string "color", default: "black", comment: "Color for the background button menu"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["pgm_id"], name: "index_menues_on_pgm_id"
+  end
+
   create_table "order_events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin", force: :cascade do |t|
     t.bigint "event_type_id", null: false
     t.bigint "user_id", null: false, comment: "User ID who creates the event"
@@ -285,6 +271,8 @@ ActiveRecord::Schema.define(version: 2019_06_20_133921) do
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "first_name", comment: "First Name"
     t.string "last_name", comment: "Last Name"
     t.text "authorizations", comment: "User authorizations"

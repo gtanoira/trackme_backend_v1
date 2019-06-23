@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   # For APIs
   scope '/api/v1', module: 'api/v1' do
     resources :users, only: [:show]
-  end 
+  end
 
   # devise for rails web application access
   devise_for :users
@@ -13,6 +13,13 @@ Rails.application.routes.draw do
      get 'login',  to: 'devise/sessions#new'
      get 'logout', to: 'devise/sessions#destroy'
   end
+
+  # *********************************************************************************
+  # APP MENUES
+  # For APIs
+  scope '/api/v1', module: 'api/v1' do
+    resources :menues, only: [:index]
+  end 
   
   # *********************************************************************************
   # CUSTOMER ORDERS
