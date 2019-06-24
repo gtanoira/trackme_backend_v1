@@ -156,31 +156,34 @@ module Api
       # => Body: JSON file
       #
       def index
-        @customer_orders = CustomerOrder.includes(:entity, :country).map do |o|
-          {
-            id: o.id,
-            name: o.entity.name,
-            orderNo: o.order_no,
-            oldOrderNo: o.old_order_no,
-            orderDate: o.order_date.to_date,
-            custRef: o.cust_ref,
-            fromEntity: o.from_entity,
-            fromCountryId: o.country.name,
-            fromCity: o.from_city,
-            toEntity: o.to_entity,
-            toCountryId: o.country.name,
-            toCity: o.to_city,
-            orderStatus: o.order_status,
-            orderType: o.order_type,
-            shipmentMethod: o.shipment_method
-          }
-        end
-        respond_to do |format|
-          format.html
-          format.json { render json: @customer_orders }
+        token_ok, token_error = helpers.API_validate_token(request)
+        if not token_ok
+          render json: {message: token_error }, status: 401
+        else
+          @customer_orders = CustomerOrder.includes(:entity, :country).map do |o|
+            {
+              id: o.id,
+              name: o.entity.name,
+              orderNo: o.order_no,
+              oldOrderNo: o.old_order_no,
+              orderDate: o.order_date.to_date,
+              custRef: o.cust_ref,
+              fromEntity: o.from_entity,
+              fromCountryId: o.country.name,
+              fromCity: o.from_city,
+              toEntity: o.to_entity,
+              toCountryId: o.country.name,
+              toCity: o.to_city,
+              orderStatus: o.order_status,
+              orderType: o.order_type,
+              shipmentMethod: o.shipment_method
+            }
+          end
+          respond_to do |format|
+            format.json { render json: @customer_orders }
+          end
         end
       end
-
 
       # ******************************************************************************
       # Read Customer Orders data from a Excel file
