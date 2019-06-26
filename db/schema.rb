@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_21_174059) do
+ActiveRecord::Schema.define(version: 2019_06_26_144413) do
 
   create_table "companies", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin", force: :cascade do |t|
     t.string "name"
@@ -209,23 +209,23 @@ ActiveRecord::Schema.define(version: 2019_06_21_174059) do
     t.bigint "customer_id", null: false
     t.string "item_id", null: false, comment: "This is the ID that goes in the sticker attached to the box"
     t.bigint "internal_order_id", null: false, comment: "Internal order ID where this item belongs to"
-    t.integer "item_type", default: 0, comment: "Determines the type of content of the Item (enum)"
-    t.integer "status", default: 0, null: false, comment: "Specifies the actual status of the item in the process of delivering (ENUM)"
+    t.string "item_type", limit: 4, default: "Box", null: false, comment: "Determines the type of content of the Item (enum)"
+    t.string "status", limit: 9, default: "OnHand", null: false, comment: "Specifies the actual status of the item in the process of delivering (enum)"
     t.string "deleted_by"
     t.string "deleted_cause"
     t.string "manufacter"
     t.string "model"
     t.string "part_number"
     t.string "serial_number"
-    t.integer "condition", default: 0, null: false, comment: "Item type: new, used, etc. (enum)"
+    t.string "condition", limit: 8, default: "New", null: false, comment: "Item type: new, used, etc. (enum)"
     t.text "contents", limit: 4294967295
-    t.integer "unit_length", default: 0, comment: "Unit of measure for distance (enum)"
+    t.string "unit_length", limit: 4, default: "cm", null: false, comment: "Unit of measure for distance (enum)"
     t.decimal "width", precision: 9, scale: 2
     t.decimal "height", precision: 9, scale: 2
     t.decimal "length", precision: 9, scale: 2
-    t.integer "unit_weight", default: 0, comment: "Unit of measure for weight (enum)"
+    t.string "unit_weight", limit: 6, default: "kg", null: false, comment: "Unit of measure for weight (enum)"
     t.decimal "weight", precision: 9, scale: 2
-    t.integer "unit_volume", default: 0, comment: "Unit of measure for volume weight (enum)"
+    t.string "unit_volume", limit: 3, default: "m3", null: false, comment: "Unit of measure for volume weight (enum)"
     t.decimal "volume_weight", precision: 9, scale: 2
     t.index ["company_id"], name: "fk_rails_ad750f090b"
     t.index ["customer_id"], name: "fk_rails_0dfe9122fd"
