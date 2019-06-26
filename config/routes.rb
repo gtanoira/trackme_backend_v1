@@ -62,6 +62,11 @@ Rails.application.routes.draw do
 
   # *********************************************************************************
   # STOCK ITEMS
+  # For Rails
+  resources :items, only: [] do
+    get  'utilities', on: :collection
+    post 'import',    on: :collection
+  end
   # For APIs
   scope '/api/v1', module: 'api/v1' do
     resources :items, only: [:create, :update]

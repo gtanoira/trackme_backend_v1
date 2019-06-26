@@ -4,19 +4,6 @@ module Api
     class CustomerOrdersController < Api::V1::ApplicationController
       #skip_before_action :verify_authenticity_token
 
-      # Define variables for cross-method's
-      @@UrlLogFile = nil    # URL of the LOG errors file (URL path NOT OS path)
-
-      # Set URL LOG filename
-      def setUrlLogFile(logFileName)
-        @@UrlLogFile = logFileName
-      end
-
-      # Get URL LOG filename
-      def getUrlLogFile
-        @@UrlLogFile
-      end
-
       # ******************************************************************************
       # Add a new order into the Data Base
       #
@@ -210,26 +197,6 @@ module Api
       end
 
       # ******************************************************************************
-      # Read Customer Orders data from a Excel file
-      # 
-      # URL: /api/customer_orders/import
-      # HTTP method: POST
-      # @params:
-      #           file (string): name of the file (excel) uploaded
-      #
-      def import
-        begin
-          result   = CustomerOrder.import(params[:file])
-          self.setUrlLogFile(result[:logFile])
-          redirect_to utilities_customer_orders_path, notice: 'Customer Orders imported: ' + result[:message]
-        rescue => e
-          puts "ERROR BACKTRACE:"
-          puts e.backtrace
-          redirect_to utilities_customer_orders_path, alert: e.to_s
-        end
-      end
-
-      # ******************************************************************************
       # Add a new Customer Order
       #
       # URL /custorder/new
@@ -363,15 +330,6 @@ module Api
           end
         end
 
-      end
-
-      # ******************************************************************************
-      # Ask to import Customer Orders data from a Excel File
-      #
-      # URL: /custorder/utilities
-      # HTTP method: GET
-      #
-      def utilities
       end
 
     end

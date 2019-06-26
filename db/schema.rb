@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_26_144413) do
+ActiveRecord::Schema.define(version: 2019_06_21_174059) do
 
   create_table "companies", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin", force: :cascade do |t|
     t.string "name"
@@ -217,7 +217,8 @@ ActiveRecord::Schema.define(version: 2019_06_26_144413) do
     t.string "model"
     t.string "part_number"
     t.string "serial_number"
-    t.string "condition", limit: 8, default: "New", null: false, comment: "Item type: new, used, etc. (enum)"
+    t.string "ua_number"
+    t.string "condition", limit: 8, default: "Original", null: false, comment: "Item type: new, used, etc. (enum)"
     t.text "contents", limit: 4294967295
     t.string "unit_length", limit: 4, default: "cm", null: false, comment: "Unit of measure for distance (enum)"
     t.decimal "width", precision: 9, scale: 2
@@ -227,6 +228,8 @@ ActiveRecord::Schema.define(version: 2019_06_26_144413) do
     t.decimal "weight", precision: 9, scale: 2
     t.string "unit_volume", limit: 3, default: "m3", null: false, comment: "Unit of measure for volume weight (enum)"
     t.decimal "volume_weight", precision: 9, scale: 2
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.datetime "updated_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.index ["company_id"], name: "fk_rails_ad750f090b"
     t.index ["customer_id"], name: "fk_rails_0dfe9122fd"
     t.index ["internal_order_id"], name: "fk_rails_930ae8c673"
