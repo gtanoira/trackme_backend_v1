@@ -38,7 +38,7 @@ class CustomerOrder < ApplicationRecord
       (2..spreadsheet.last_row).each do |i|
         puts '*** REGISTRO: ' + i.to_s
         row = Hash[[header, spreadsheet.row(i)].transpose]
-        puts 'OLD NO: //' + row['old_order_no'] + '//'
+        puts "OLD NO: //#{row['old_order_no']}//"
         custorder = find_by_old_order_no((row['old_order_no'] || '')) || new
         custorder.attributes = row.to_hash.slice(*custorder.attributes.keys)
 
@@ -51,18 +51,18 @@ class CustomerOrder < ApplicationRecord
           begin
             rec_entity = Entity.find_by(name: row['customer_name'])
             if rec_entity.blank? then
-              csv_record.puts('Row: ' + i.to_s + ' - Customer Name not found: ' + row['customer_name'])
+              csv_record.puts("Row: #{i.to_s} - Customer Name not found: #{row['customer_name']}")
               has_errors = true
             else
               custorder.customer_id = rec_entity.id
               custorder.company_id  = rec_entity.company_id
             end
           rescue => e
-            csv_record.puts('Row: ' + i.to_s + ' - Error finding customer in Entity table / ' + e.to_s)
+            csv_record.puts("Row: #{i.to_s} - Error finding customer in Entity table / #{e.to_s}")
             has_errors = true
           end
         else
-          csv_record.puts('Row: ' + i.to_s + ' - Customer Name can not be empty.')
+          csv_record.puts("Row: #{i.to_s} - Customer Name can not be empty.")
           has_errors = true
         end
 
@@ -81,28 +81,58 @@ class CustomerOrder < ApplicationRecord
 
         # Field order_date
         begin
-          custorder.order_date = Date.strptime(row['order_date'], '%m/%d/%Y')
+          custorder.order_date = Date.strptime(row['orderDate'], '%m/%d/%Y')
         rescue
-          csv_record.puts('Row: ' + i.to_s + ' - order_date conversion error (mm/dd/yyyy): ' + row['order_date'] +'\n')
+          csv_record.puts("Row: #{i.to_s} - order_date conversion error (mm/dd/yyyy): #{row['orderDate']}\n")
           has_errors = true
         end
 
         # Field observations
-        custorder.observations = 'MIGRATION '             + Date.today().strftime('%d-%b-%Y') + '\n' \
-                               + 'OLD Status: '           + row['observations_status'] + '\n' \
-                               + 'OLD Type: '             + row['observations_type'] + '\n' \
-                               + 'OLD LastEvent: '        + row['observations_last_event'] + '\n' \
-                               + 'OLD LastInternalNote: ' + row['observations_last_internal_note'] + '\n' 
+        custorder.observations = "MIGRATION             #{ Date.today().strftime("%d-%b-%Y") }\n" \
+                               + "OLD Status:           #{ row["observations_status"] }\n" \
+                               + "OLD Type:             #{ row["observations_type"] }\n" \
+                               + "OLD LastEvent:        #{ row["observations_lastEvent"] }\n" \
+                               + "OLD LastInternalNote: #{ row["observations_lastInternal_note"] }\n" 
 
-        # Field from_contact
-        custorder.from_contact = row['from_contact_first_name'] +' '+ row['from_contact_last_name']
+        # Customer reference
+        custorder.cust_ref = row['custRef']
 
-        # Field to_ontact
-        custorder.to_contact = row['to_contact_first_name'] +' '+ row['to_contact_last_name']
+        # Order Status
+        custorder.order_status = (row['orderStatus'].blank?)? 'P' : row['orderStatus']
 
-        # Field to_country_id and from_country_id
-        custorder.from_country_id = (custorder.from_country_id.blank?)? 'NNN' : custorder.from_country_id.rstrip
-        custorder.to_country_id   = (custorder.to_country_id.blank?)?   'NNN' : custorder.to_country_id.rstrip
+        # OLD order NO. from legacy system
+        custorder.old_order_no = row['oldOrderNo']
+
+        # Shipment method
+        custorder.shipment_method = (row['shipmentMethod'].blank?)? 'A' : row['shipmentMethod']
+
+        # Delivery Date
+        custorder.delivery_date = (row['deliveryDate'].blank?)? nil : Date.strptime(row['deliveryDate'], '%m/%d/%Y')
+
+        # Fields FROM_*
+        custorder.from_entity     = row['fromEntity'].rstrip
+        custorder.from_address1   = row['fromAddress']
+        custorder.from_city       = row['fromCity']
+        custorder.from_zipcode    = row['fromZipCode']
+        custorder.from_state      = row['fromState']
+        custorder.from_country_id = (row['fromCountry_id'].blank?)? 'NNN' : row['fromCountry_id'].rstrip
+        custorder.from_contact    = row['fromContact_firstName'] +' '+ row['fromContact_lastName']
+        custorder.from_email      = row['fromEmail']
+        custorder.from_tel        = row['fromTel']
+
+        # Fields TO_*
+        custorder.to_entity      = row['toEntity'].rstrip
+        custorder.to_address1    = row['toAddress']
+        custorder.to_city        = row['toCity']
+        custorder.to_zipcode     = row['toZipCode']
+        custorder.to_state       = row['toState']
+        custorder.to_country_id  = (row['toCountry_id'].blank?)? 'NNN' : row['toCountry_id'].rstrip
+        custorder.to_contact     = row['toContact_firstName'] +' '+ row['toContact_lastName']
+        custorder.to_email       = row['toEmail']
+        custorder.to_tel         = row['toTel']
+
+        # Third Party Id
+        custorder.third_party_id = custorder.customer_id
         
         # Save data
         if not has_errors then
@@ -110,23 +140,23 @@ class CustomerOrder < ApplicationRecord
             custorder.save!
             recs_saved += 1
           rescue => e
-            csv_record.puts('Row: ' + i.to_s + ' - error saving to DBase: ' + e.to_s)
+            csv_record.puts("Row: #{i.to_s} - error saving to DBase: #{e.to_s}")
           end
         end
       end #loop
       recs_read = spreadsheet.last_row - 1
 
-      csv_record.puts('Records read: ' + recs_read.to_s + ' / Records saved to DBase: ' + recs_saved.to_s)
+      csv_record.puts("Records read: #{recs_read.to_s} / Records saved to DBase: #{recs_saved.to_s}")
       csv_record.close()
 
       if (recs_read == recs_saved) then
         output = {
-          "message": 'Records read: ' + recs_read.to_s + ' / Records saved to DBase: ' + recs_saved.to_s,
+          "message": "Records read: #{recs_read.to_s} / Records saved to DBase: #{recs_saved.to_s}",
           "logFile": ""
         }
       else
         output = {
-          "message": 'Records read: ' + recs_read.to_s + ' / Records saved to DBase: ' + recs_saved.to_s + ' / Please, download and check the LOG for errors',
+          "message": "Records read: #{recs_read.to_s} / Records saved to DBase: #{recs_saved.to_s} / Please, download and check the LOG for errors",
           "logFile": logFileName
         }
       end
