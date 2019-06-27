@@ -69,7 +69,7 @@ Rails.application.routes.draw do
   end
   # For APIs
   scope '/api/v1', module: 'api/v1' do
-    resources :items, only: [:create, :update]
+    resources :items, only: [:index]
   end 
 
   # *********************************************************************************
