@@ -136,7 +136,7 @@ module Api
       # ******************************************************************************
       # List all Customer Orders data with a grid using ag-grid
       # 
-      # URL: /api/customer_orders/
+      # URL: /api/v1/customer_orders/
       # HTTP method: GET
       # Response
       # => Content-type: application/json;
