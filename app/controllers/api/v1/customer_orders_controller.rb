@@ -2,7 +2,7 @@ module Api
   module V1
 
     class CustomerOrdersController < Api::V1::ApplicationController
-      #skip_before_action :verify_authenticity_token
+      skip_before_action :verify_authenticity_token
 
       # ******************************************************************************
       # Add a new order into the Data Base
@@ -149,6 +149,7 @@ module Api
         else
           @customer_orders = CustomerOrder.includes(:entity, :country).map do |o|
             {
+              id: o.id,
               companyId: o.company_id,
               customerId: o.customer_id,
               customerName: o.entity.name,
@@ -207,7 +208,7 @@ module Api
       # ******************************************************************************
       # Get a Customer Order by id
       # 
-      # URL: /api/customer_order/[:id].json
+      # URL: /api/v1/customer_order/[:id].json
       # Method: GET
       # URL params: 
       #   id: customer order ID. This is the record ID(id) not the order no.(order_no)
@@ -274,7 +275,7 @@ module Api
       # ******************************************************************************
       # Update a existing customer order in the Data Base
       #
-      # URL: /api/customer_orders/:id
+      # URL: /api/v1/customer_orders/:id
       # HTTP method: PATCH
       # Query params:  none
       # Request Body: (JSON) customer order data fields only
@@ -284,19 +285,26 @@ module Api
         begin
           CustomerOrder.update(
             rec_id,
+            # BLOCK: general
             order_date:      params['orderDate'],
-            observations:    params['observations'],
             cust_ref:        params['custRef'],
             order_type:      params['orderType'],
-            order_status:    params['orderStatus'],
             applicant_name:  params['applicantName'],
-            old_order_no:    params['oldOrderNo'],
             incoterm:        params['incoterm'],
             shipment_method: params['shipmentMethod'],
+            # Order Data
+            order_status:    params['orderStatus'],
+            old_order_no:    params['oldOrderNo'],
+            # Events
+            events_scope:    params['eventsScope'],
+            # Observations
+            observations:    params['observations'],
+            pieces:          params['pieces'],
+            # Other
             eta:             params['eta'],
             delivery_date:   params['deliveryDate'],
-            events_scope:    params['eventsScope'],
             third_party_id:  params['thirdPartyId'],
+            # BLOCK: From
             from_entity:     params['fromEntity'],
             from_address1:   params['fromAddress1'],
             from_address2:   params['fromAddress2'],
@@ -304,6 +312,7 @@ module Api
             from_zipcode:    params['fromZipcode'],
             from_state:      params['fromState'],
             from_country_id: params['fromCountryId'],
+            # BLOCK: To
             to_entity:       params['toEntity'],
             to_address1:     params['toAddress1'],
             to_address2:     params['toAddress2'],
@@ -316,9 +325,13 @@ module Api
           puts '*** ORDEN SALVADA / recId: ' + rec_id.to_s + ' / OrderId: ' + params['orderNo'].to_s
 
           respond_to do |format|
-            format.json { render json: {message: 'Customer order saved. Order No. ' + params['orderNo'].to_s,
-                                        orderId: rec_id,
-                                        orderNo: params['orderNo']} }
+            format.json { 
+              render json: {
+                message: 'Customer order saved. Order No. ' + params['orderNo'].to_s,
+                orderId: rec_id,
+                orderNo: params['orderNo']
+              }
+            }
           end
 
         rescue => e

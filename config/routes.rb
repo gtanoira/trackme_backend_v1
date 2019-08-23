@@ -20,6 +20,24 @@ Rails.application.routes.draw do
   scope '/api/v1', module: 'api/v1' do
     resources :menues, only: [:index]
   end 
+
+  # *********************************************************************************
+  # COMPANIES
+  # For Rails
+  resources :companies, only: [:index]
+  # For APIs
+  scope '/api/v1', module: 'api/v1' do
+    resources :companies, only: [:index]
+  end 
+
+  # *********************************************************************************
+  # COUNTRIES
+  # For Rails
+  resources :countries, only: [:index]
+  # For APIs
+  scope '/api/v1', module: 'api/v1' do
+    resources :countries, only: [:index]
+  end 
   
   # *********************************************************************************
   # CUSTOMER ORDERS
@@ -38,17 +56,27 @@ Rails.application.routes.draw do
   end 
 
   # *********************************************************************************
-  # WAREHOUSE RECEIPT
+  # ENTITIES
   # For Rails
-  # resources :warehouse_receipts, only: [:index]
+  resources :entities, only: [:index] do
+    get  'utilities', on: :collection
+    post 'import',    on: :collection
+    get  ':type',     on: :collection, action: :index   # to get different types of entities: (CUS)tomers, (CAR)riers, (SUP)pliers, (null):all
+  end
   # For APIs
   scope '/api/v1', module: 'api/v1' do
-    resources :warehouse_receipts, only: [:create, :show, :update] do
-      get  'lastorder/:company_id', on: :collection, action: :get_last_order  
-      get  'customer_order/get_ids/:customer_order_id', on: :collection, action: :get_ids
-
-      resources :events, only: [:index, :create]
+    resources :entities, only: [:index, :show] do
+      get  'type/:type', on: :collection, action: :index
     end
+  end 
+
+  # *********************************************************************************
+  # EVENT TYPES
+  # For Rails
+  resources :event_types, only: [:index]
+  # For APIs
+  scope '/api/v1', module: 'api/v1' do
+    resources :event_types, only: [:index]
   end 
 
   # *********************************************************************************
@@ -73,45 +101,17 @@ Rails.application.routes.draw do
   end 
 
   # *********************************************************************************
-  # COMPANIES
+  # WAREHOUSE RECEIPT
   # For Rails
-  resources :companies, only: [:index]
+  # resources :warehouse_receipts, only: [:index]
   # For APIs
   scope '/api/v1', module: 'api/v1' do
-    resources :companies, only: [:index]
-  end 
+    resources :warehouse_receipts, only: [:create, :show, :update] do
+      get  'lastorder/:company_id', on: :collection, action: :get_last_order  
+      get  'customer_order/get_ids/:customer_order_id', on: :collection, action: :get_all_wr_for_customer_order
 
-  # *********************************************************************************
-  # COUNTRIES
-  # For Rails
-  resources :countries, only: [:index]
-  # For APIs
-  scope '/api/v1', module: 'api/v1' do
-    resources :countries, only: [:index]
-  end 
-
-  # *********************************************************************************
-  # ENTITIES
-  # For Rails
-  resources :entities, only: [:index] do
-     get  'utilities', on: :collection
-     post 'import',    on: :collection
-     get  ':type',     on: :collection, action: :index   # to get different types of entities: (CUS)tomers, (CAR)riers, (SUP)pliers, (null):all
-  end
-  # For APIs
-  scope '/api/v1', module: 'api/v1' do
-    resources :entities, only: [:index, :show] do
-       get  'type/:type', on: :collection, action: :index
+      resources :events, only: [:index, :create]
     end
-  end 
-
-  # *********************************************************************************
-  # EVENT TYPES
-  # For Rails
-  resources :event_types, only: [:index]
-  # For APIs
-  scope '/api/v1', module: 'api/v1' do
-    resources :event_types, only: [:index]
   end 
 
   # *********************************************************************************

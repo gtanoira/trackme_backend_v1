@@ -43,30 +43,35 @@ module Api
       # ******************************************************************************
       # Get all the Events of a Order
       # 
-      # URL: /api/customer_orders/:id/customer_order_events.json
+      # URL: /api/v1/customer_orders/:customer_order_id/events.json
       # HTTP method: GET
       # Query params:  
       #    :id (int): order ID 
       # Request Body: (Array of JSONs) events of an order
       def index
-
-        if params['customer_order_id'] == 0 then
-          @order_events = []
-
+        token_ok, token_error = helpers.API_validate_token(request)
+        if not token_ok
+          render json: {message: token_error }, status: 401
         else
-          @order_events = CustomerOrderEvent.includes(:event_type, :user).where(order_id: params['customer_order_id']).map do |o|
-            {
-              id:           o.id,
-              eventDate:    o.event_datetime,
-              eventName:    o.event_type.name,
-              observations: o.observations,
-              eventUser:    o.user.email
-            }
-          end
-        end
 
-        respond_to do |format|
-          format.json { render json: @order_events }
+          if params['customer_order_id'] == 0 then
+            @order_events = []
+
+          else
+            @order_events = CustomerOrderEvent.includes(:event_type, :user).where(order_id: params['customer_order_id']).map do |o|
+              {
+                id:           o.id,
+                eventDate:    o.event_datetime,
+                eventName:    o.event_type.name,
+                observations: o.observations,
+                eventUser:    o.user.email
+              }
+            end
+          end
+
+          respond_to do |format|
+            format.json { render json: @order_events }
+          end
         end
       end
 
