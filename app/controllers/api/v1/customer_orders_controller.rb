@@ -28,6 +28,7 @@ module Api
               customer_order.order_no        = new_order_no + 1
               customer_order.order_date      = params['orderDate']
               customer_order.observations    = params['observations']
+              customer_order.pieces          = params['pieces']
               customer_order.cust_ref        = params['custRef']
               customer_order.order_type      = params['orderType']
               customer_order.order_status    = params['orderStatus']
@@ -46,6 +47,9 @@ module Api
               customer_order.from_zipcode    = params['fromZipcode']
               customer_order.from_state      = params['fromState']
               customer_order.from_country_id = params['fromCountryId']
+              customer_order.from_contact    = params['fromContact']
+              customer_order.from_email      = params['fromEmail']
+              customer_order.from_tel        = params['fromTel']
               customer_order.to_entity       = params['toEntity']
               customer_order.to_address1     = params['toAddress1']
               customer_order.to_address2     = params['toAddress2']
@@ -53,13 +57,16 @@ module Api
               customer_order.to_zipcode      = params['toZipcode']
               customer_order.to_state        = params['toState']
               customer_order.to_country_id   = params['toCountryId']
+              customer_order.to_contact      = params['toContact']
+              customer_order.to_email        = params['toEmail']
+              customer_order.to_tel          = params['toTel']
               customer_order.save!
 
               puts '*** ORDEN SALVADA: ' + customer_order.order_no.to_s
 
               respond_to do |format|
                 format.json { render json: {message: 'Customer order saved. Order No.' + customer_order.order_no.to_s,
-                                            orderId: customer_order.id,
+                                            id: customer_order.id,
                                             orderNo: customer_order.order_no} }
               end
 
@@ -67,7 +74,7 @@ module Api
 
               respond_to do |format|
                 format.json { render json: {message: 'Error saving the new customer order. Not able to obtain a order no.',
-                                            orderId: 0,
+                                            id: 0,
                                             orderNo: 0} }
               end
             end

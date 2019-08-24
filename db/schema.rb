@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_21_174059) do
+ActiveRecord::Schema.define(version: 2019_08_24_163449) do
 
   create_table "companies", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin", force: :cascade do |t|
     t.string "name"
@@ -251,7 +251,7 @@ ActiveRecord::Schema.define(version: 2019_06_21_174059) do
     t.bigint "event_type_id", null: false
     t.bigint "user_id", null: false, comment: "User ID who creates the event"
     t.string "type", default: "CustomerOrderEvent", null: false, comment: "Type of event: CustomerOrderEvent, WarehouseReceiptEvent or ShipmentEvent"
-    t.bigint "order_id", null: false, comment: "Used with the field TYPE, determines the order it belongs to"
+    t.bigint "customer_order_id", null: false
     t.datetime "event_datetime"
     t.string "observations", limit: 1000
     t.string "event_scope", limit: 3, default: "PRI", comment: "(PRI):private, only visible by the company / (PUB):visible by all, company and customer"
